@@ -16,13 +16,17 @@ const Builder = () => {
     const id = "Anchors_Builder";
     const [anchors, setAnchors] = useState<Anchor[]>([]);
     const [looseAnchors, setLooseAnchors] = useState<Anchor[]>([]);
-    const [mode, setMode] = useState("");
+    const [mode, setMode] = useState<string>("");
+    const [index, setIndex] = useState<number>(0);
+    const [moving, setMoving] = useState(-1);
 
     // shift mode listener
     useEffect(() => {
         const handleKeyDown = (event: any): void => {
             if (event.key === add) {
                 setMode(add);
+            } else if (event.key === "d") {
+                setMode(remove)
             }
         };
         const handleKeyUp = (event: any): void => {
@@ -41,12 +45,16 @@ const Builder = () => {
         if (mode === move) {
             updateAnchors(setLooseAnchors, setAnchors);
         }
+        console.log(mode)
     }, [mode]);
 
-    // anchors listener
     useEffect(() => {
-        console.log("anchors", anchors);
-    }, [anchors]);
+        console.log(anchors)
+    }, [anchors])
+    useEffect(() => {
+        console.log(moving)
+    }, [moving])
+
     const Block = {
         marginTop: "20px",
         marginLeft: "40px",
@@ -62,10 +70,17 @@ const Builder = () => {
                 <Canvas
                     mode={mode}
                     anchors={anchors}
+                    index={index}
+                    setIndex={setIndex}
                     setAnchors={setAnchors}
                     looseAnchors={looseAnchors}
                     setLooseAnchors={setLooseAnchors}
-                />
+                    moving={moving}
+                    setMoving={setMoving}
+                >
+                    {circleAnchors(anchors, "rgb(83, 161, 235)", mode, setMoving, moving, setAnchors, setIndex)}
+                    {circleAnchors(looseAnchors, "#fc9c9c", mode, setMoving, moving, setAnchors, setIndex)}
+                </Canvas>
             </div>
         </div>
     );
