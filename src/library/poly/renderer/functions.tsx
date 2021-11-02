@@ -48,9 +48,6 @@ const createPoly = (anchors: Anchor[], color: string) => {
 export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
   if (anchors.length > 2 && clusters.length > 0) {
     const polys: any = [];
-    console.log("from generage poly")
-    console.log("anchors", anchors);
-    console.log("clusters", clusters)
     for (let i = 0; i < clusters.length; i++) {
       const anchorCluster = [];
       for (let j = 0; j < clusters[i].length; j++) {

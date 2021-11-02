@@ -1,5 +1,4 @@
-
-import { modes, Anchor, coord, canvasProps } from "../interface"
+import { modes, Anchor, coord, canvasProps } from "../interface";
 /**
  *
  * @param {number} x - mouse X position relative to div in percentage
@@ -50,83 +49,120 @@ export const updateAnchors = (
       const anchorsClone: Anchor[] = anchors;
       looseAnchors.forEach((looseAnchor: Anchor) => {
         anchorsClone[looseAnchor.i] = looseAnchor;
-      })
+      });
       return anchorsClone;
     });
     return [];
   });
 };
 /**
- * 
+ *
  * @param {any} event -Takes mouse clicke event
  * @param {string}  id -canvas id
- * @param setAnchors 
- * @param setLooseAnchors 
+ * @param setAnchors
+ * @param setLooseAnchors
  */
-export const addLooseAnchor = (event: any, id: string, index: number, setIndex: Function, setAnchors: Function, setLooseAnchors: Function) => {
-
+export const addLooseAnchor = (
+  event: any,
+  id: string,
+  index: number,
+  setIndex: Function,
+  setAnchors: Function,
+  setLooseAnchors: Function
+) => {
   setAnchors((anchors: Anchor[]) => {
     const coords: coord = getMouseCoords(event, id);
     setLooseAnchors((looseAnchors: Anchor[]) => {
-      const anchor: Anchor = { i: index, x: coords.x, y: coords.y, z: 0 }
-      return [...looseAnchors, ...[anchor]]
+      const anchor: Anchor = { i: index, x: coords.x, y: coords.y, z: 0 };
+      return [...looseAnchors, ...[anchor]];
     });
 
-    setIndex((Index: number) => { return index + 1 })
-    return anchors
-  })
-}
+    setIndex((Index: number) => {
+      return index + 1;
+    });
+    return anchors;
+  });
+};
 
+const deleteNode = (
+  index: number,
+  setAnchors: Function,
+  setIndex: Function,
+  setClusters: Function
+) => {
 
-const deleteNode = (index: number, setAnchors: Function, setIndex: Function, setClusters: Function) => {
-  console.log("deleting")
   setAnchors((anchors: Anchor[]) => {
-    setIndex((Index: number) => { return anchors.length - 1 })
+    setIndex((Index: number) => {
+      return anchors.length - 1;
+    });
 
-    const corrected: Anchor[] = []
+    const corrected: Anchor[] = [];
     anchors.forEach((anchor: Anchor) => {
       if (anchor.i !== index) {
         if (anchor.i > index) {
-          const down: Anchor = { i: anchor.i - 1, x: anchor.x, y: anchor.y, z: anchor.z }
-          corrected.push(down)
-          console.log(down)
+          const down: Anchor = {
+            i: anchor.i - 1,
+            x: anchor.x,
+            y: anchor.y,
+            z: anchor.z,
+          };
+          corrected.push(down);
+
         } else {
-          corrected.push({ i: anchor.i, x: anchor.x, y: anchor.y, z: anchor.z })
+          corrected.push({
+            i: anchor.i,
+            x: anchor.x,
+            y: anchor.y,
+            z: anchor.z,
+          });
         }
       }
-    })
-    return corrected
-  })
-}
-export const updateClusters = (setClustering: Function, setClusters: Function) => {
+    });
+    return corrected;
+  });
+};
+export const updateClusters = (
+  setClustering: Function,
+  setClusters: Function
+): void => {
   setClustering((clustering: number[]) => {
     if (clustering.length > 2) {
-
       setClusters((clusters: number[][]) => {
         const clustersClone: number[][] = clusters;
-        clustersClone.push(clustering)
-        return clustersClone
-      })
+        clustersClone.push(clustering);
+        return clustersClone;
+      });
     }
-    return []
-  })
-}
-const clusterNodes = (index: number, setClustering: Function) => {
+    return [];
+  });
+};
+const addClusteringNode = (index: number, setClustering: Function): void => {
   setClustering((clustering: number[]) => {
-    const clone = clustering;
-    clone.push(index)
-    return clone
-  })
-}
+    const clone = [...clustering];
+    clone.push(index);
+    return clone;
+  });
+};
 /**
- * @param {Anchor[]} anchors 
- * @param {string} color 
+ * @param {Anchor[]} anchors
+ * @param {string} color
  * @param {string} mode - avoids conflicting functions
  * @param {Function} setMoving - allow for the movement of a node
  * @param {number} moving - the node that shall be moved
- * @returns 
+ * @returns
  */
-export const circleAnchors = (anchors: Anchor[], color: string, mode: string, setMoving: Function, moving: number, setAnchors: Function, setIndex: Function, setClusters: Function) => {
+export const circleAnchors = (
+  anchors: Anchor[],
+  color: string,
+  mode: string,
+  setMoving: Function,
+  moving: number,
+  setAnchors: Function,
+  setIndex: Function,
+  clustering: number[],
+  setClusters: Function,
+  setClustering: Function
+) => {
   const uid = "circleAnchors_";
   const size: number = 20;
 
@@ -134,28 +170,37 @@ export const circleAnchors = (anchors: Anchor[], color: string, mode: string, se
   for (let i = 0; i < anchors.length; i++) {
     const whichColor = () => {
       if (moving === i) {
-        return "#59c2ff"
+        return "#59c2ff";
       } else if (mode === modes.remove) {
-        return "#da3c3c"
+        return "#e64e4e";
       } else if (mode === modes.add) {
-        return "#f5a227"
+        return "#15eb39";
+      } else if (mode === modes.cluster) {
+        const clusterColor = "#f7bf0a"
+        if (clustering.length === 0) {
+          return clusterColor;
+        } else {
+          if (clustering.includes(i)) {
+            return clusterColor
+          } else {
+            return "#ffffff"
+          }
+        }
       } else {
-        return "#ffffff"
+        return "#ffffff";
       }
-    }
+    };
+
     circles.push(
       <div
         onClick={(e) => {
           e.stopPropagation();
           if (mode === modes.move) {
-            setMoving(anchors[i].i)
-            console.log(anchors[i])
-
+            setMoving(anchors[i].i);
           } else if (mode === modes.remove) {
-            console.log("deleting")
-            deleteNode(i, setAnchors, setIndex, setClusters)
+            deleteNode(i, setAnchors, setIndex, setClusters);
           } else if (mode === modes.cluster) {
-
+            addClusteringNode(i, setClustering)
           }
         }}
         key={uid + i}
@@ -174,7 +219,7 @@ export const circleAnchors = (anchors: Anchor[], color: string, mode: string, se
           userSelect: "none",
           left: `${anchors[i].x}%`,
           top: `${anchors[i].y}%`,
-          pointerEvents: mode === "Shift" ? "none" : "auto",
+          pointerEvents: mode === modes.add || moving !== -1 ? "none" : "auto",
           backgroundColor: whichColor(),
           transform: "translate(-50%,-50%)",
         }}
@@ -186,7 +231,6 @@ export const circleAnchors = (anchors: Anchor[], color: string, mode: string, se
   return circles;
 };
 
-
 /**
  * @param {object} event - event return by Mouse Click
  * @param {string} id - unique id to use in get mouse coords
@@ -197,18 +241,24 @@ export const handleCanvasClick = (
   id: string,
   props: canvasProps
 ) => {
-  if (props.mode === "Shift") {
-    addLooseAnchor(event, id, props.index, props.setIndex, props.setAnchors, props.setLooseAnchors)
-  } else if (props.mode === "" && props.moving !== -1) {
+  if (props.mode === modes.add) {
+    addLooseAnchor(
+      event,
+      id,
+      props.index,
+      props.setIndex,
+      props.setAnchors,
+      props.setLooseAnchors
+    );
+  } else if (props.mode === modes.move && props.moving !== -1) {
     const index = props.moving;
     props.setAnchors((anchors: Anchor[]) => {
       const clone: Anchor[] = anchors;
       const coords = getMouseCoords(event, id);
       clone[index] = { i: index, x: coords.x, y: coords.y, z: 0 };
 
-      props.setMoving(-1)
+      props.setMoving(-1);
       return clone;
-    })
+    });
   }
 };
-

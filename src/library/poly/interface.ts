@@ -35,8 +35,8 @@ export interface rendererProps {
  * @interface -move is empty and is default
  */
 export const modes = {
-  add: "Shift",
-  remove: "d",
-  move: "",
-  cluster: "c",
+  add: "Control",
+  remove: "Delete",
+  move: "Space character",
+  cluster: "Shift",
 };
