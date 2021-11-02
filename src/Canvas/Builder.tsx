@@ -1,36 +1,32 @@
 import React, { useEffect, useState } from "react";
-import {
-    Anchor,
-    circleAnchors,
-    coordsToAnchor,
-    getMouseCoords,
-    updateAnchors,
-    Modes
-} from "../library/poly/builder/functions";
+import { circleAnchors, updateAnchors, updateClusters } from "../library/poly/builder/functions";
+import { modes, Anchor } from "../library/poly/interface";
+import Renderer from "../library/poly/renderer/Renderer";
 import Canvas from "./Canvas";
-
-const modes: Modes = { add: "Shift", remove: "Delete", move: "" }
-const { add, remove, move } = modes;
+import { init } from "../library/poly/renderer/anchorsInit";
 
 const Builder = () => {
     const id = "Anchors_Builder";
     const [anchors, setAnchors] = useState<Anchor[]>([]);
-    const [looseAnchors, setLooseAnchors] = useState<Anchor[]>([]);
-    const [mode, setMode] = useState<string>("");
+    const [looseAnchors, setLooseAnchors] = useState<Anchor[]>(init);
+    const [mode, setMode] = useState<string>(modes.move);
     const [index, setIndex] = useState<number>(0);
     const [moving, setMoving] = useState(-1);
+
+    const [clustering, setClustering] = useState<number[]>([])
+    const [clusters, setClusters] = useState<number[][]>([[0, 1, 2], [1, 2, 3]])
 
     // shift mode listener
     useEffect(() => {
         const handleKeyDown = (event: any): void => {
-            if (event.key === add) {
-                setMode(add);
-            } else if (event.key === "d") {
-                setMode(remove)
+            if (event.key === modes.add) {
+                setMode(modes.add);
+            } else if (event.key === modes.remove) {
+                setMode(modes.remove)
             }
         };
         const handleKeyUp = (event: any): void => {
-            setMode(move)
+            setMode(modes.move)
         };
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
@@ -42,8 +38,9 @@ const Builder = () => {
     }, []);
 
     useEffect(() => {
-        if (mode === move) {
+        if (mode === modes.move) {
             updateAnchors(setLooseAnchors, setAnchors);
+            updateClusters(setClustering, setClusters);
         }
         console.log(mode)
     }, [mode]);
@@ -55,18 +52,20 @@ const Builder = () => {
         console.log(moving)
     }, [moving])
 
-    const Block = {
-        marginTop: "20px",
-        marginLeft: "40px",
-        width: "1000px",
-        height: "700px",
-        border: mode ? "2px solid red" : "2px solid black",
-    };
+
 
     return (
         <div id={id}>
             Builder : {JSON.stringify(anchors)}
-            <div style={Block}>
+            <div style={{
+                position: "relative",
+                marginTop: "20px",
+                marginLeft: "40px",
+                width: "1000px",
+                height: "700px",
+                border: mode ? "2px solid red" : "2px solid black",
+            }}>
+                <Renderer anchors={anchors} clusters={clusters} />
                 <Canvas
                     mode={mode}
                     anchors={anchors}
@@ -78,9 +77,10 @@ const Builder = () => {
                     moving={moving}
                     setMoving={setMoving}
                 >
-                    {circleAnchors(anchors, "rgb(83, 161, 235)", mode, setMoving, moving, setAnchors, setIndex)}
-                    {circleAnchors(looseAnchors, "#fc9c9c", mode, setMoving, moving, setAnchors, setIndex)}
+                    {circleAnchors(anchors, "rgb(83, 161, 235)", mode, setMoving, moving, setAnchors, setIndex, setClusters)}
+                    {circleAnchors(looseAnchors, "#fc9c9c", mode, setMoving, moving, setAnchors, setIndex, setClusters)}
                 </Canvas>
+
             </div>
         </div>
     );

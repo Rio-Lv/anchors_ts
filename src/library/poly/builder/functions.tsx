@@ -1,41 +1,5 @@
-import { useEffect } from "react";
-/**
- * @interface {i:__,x:__,y:__,z:__} 
- */
-export interface Anchor {
-  i: number;
-  x: number;
-  y: number;
-  z: number;
-}
-export interface coord {
-  x: number;
-  y: number;
-}
-/**
- * @interface -properties: mode , anchors , setAnchors , looseAnchors , setLooseAnchors
- */
-export interface canvasProps {
-  mode: string;
-  anchors: Anchor[];
-  index: number;
-  setIndex: Function;
-  setAnchors: Function;
-  looseAnchors: Anchor[];
-  setLooseAnchors: Function;
-  moving: number;
-  setMoving: Function;
-  children: any,
 
-}
-/**
- * @interface -move is empty and is default 
- */
-export interface Modes {
-  add: "Shift";
-  remove: "Delete";
-  move: "";
-}
+import { modes, Anchor, coord, canvasProps } from "../interface"
 /**
  *
  * @param {number} x - mouse X position relative to div in percentage
@@ -52,8 +16,8 @@ export const coordsToAnchor = (
   const anchor: Anchor = { i: i, x: x, y: y, z: 0 };
   return anchor;
 };
+
 /**
- *
  * @param event - the event returned by the mouse
  * @param id - unique string need to use document.getElementById(...)
  * @returns {coord} - return a coordinate in percentage relative to the div
@@ -114,7 +78,7 @@ export const addLooseAnchor = (event: any, id: string, index: number, setIndex: 
 }
 
 
-const deleteNode = (index: number, setAnchors: Function, setIndex: Function) => {
+const deleteNode = (index: number, setAnchors: Function, setIndex: Function, setClusters: Function) => {
   console.log("deleting")
   setAnchors((anchors: Anchor[]) => {
     setIndex((Index: number) => { return anchors.length - 1 })
@@ -134,6 +98,26 @@ const deleteNode = (index: number, setAnchors: Function, setIndex: Function) => 
     return corrected
   })
 }
+export const updateClusters = (setClustering: Function, setClusters: Function) => {
+  setClustering((clustering: number[]) => {
+    if (clustering.length > 2) {
+
+      setClusters((clusters: number[][]) => {
+        const clustersClone: number[][] = clusters;
+        clustersClone.push(clustering)
+        return clustersClone
+      })
+    }
+    return []
+  })
+}
+const clusterNodes = (index: number, setClustering: Function) => {
+  setClustering((clustering: number[]) => {
+    const clone = clustering;
+    clone.push(index)
+    return clone
+  })
+}
 /**
  * @param {Anchor[]} anchors 
  * @param {string} color 
@@ -142,7 +126,7 @@ const deleteNode = (index: number, setAnchors: Function, setIndex: Function) => 
  * @param {number} moving - the node that shall be moved
  * @returns 
  */
-export const circleAnchors = (anchors: Anchor[], color: string, mode: string, setMoving: Function, moving: number, setAnchors: Function, setIndex: Function) => {
+export const circleAnchors = (anchors: Anchor[], color: string, mode: string, setMoving: Function, moving: number, setAnchors: Function, setIndex: Function, setClusters: Function) => {
   const uid = "circleAnchors_";
   const size: number = 20;
 
@@ -151,9 +135,9 @@ export const circleAnchors = (anchors: Anchor[], color: string, mode: string, se
     const whichColor = () => {
       if (moving === i) {
         return "#59c2ff"
-      } else if (mode === "Delete") {
+      } else if (mode === modes.remove) {
         return "#da3c3c"
-      } else if (mode === "Shift") {
+      } else if (mode === modes.add) {
         return "#f5a227"
       } else {
         return "#ffffff"
@@ -163,13 +147,15 @@ export const circleAnchors = (anchors: Anchor[], color: string, mode: string, se
       <div
         onClick={(e) => {
           e.stopPropagation();
-          if (mode === "") {
+          if (mode === modes.move) {
             setMoving(anchors[i].i)
             console.log(anchors[i])
 
-          } else if (mode === "Delete") {
+          } else if (mode === modes.remove) {
             console.log("deleting")
-            deleteNode(i, setAnchors, setIndex)
+            deleteNode(i, setAnchors, setIndex, setClusters)
+          } else if (mode === modes.cluster) {
+
           }
         }}
         key={uid + i}
