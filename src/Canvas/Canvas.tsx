@@ -1,4 +1,3 @@
-
 import { handleCanvasClick } from "../library/poly/builder/functions";
 import { canvasProps, modes } from "../library/poly/interface";
 /**
@@ -10,7 +9,7 @@ import { canvasProps, modes } from "../library/poly/interface";
  * 
  */
 const Canvas = (props: canvasProps) => {
-    const id = "Anchors_Canvas"
+    const id = "Anchors_Canvas";
     return (
         <div
             id={id}
@@ -19,10 +18,16 @@ const Canvas = (props: canvasProps) => {
                 width: "100%",
                 height: "100%",
                 // backgroundColor: "#000000",
-                cursor: (props.mode !== modes.move || props.moving !== -1) && (props.mode !== modes.cluster && props.mode !== modes.remove) ? "crosshair" : "auto",
+                pointerEvents: props.mode === modes.hide ? "none" : "auto",
+                cursor:
+                    (props.mode !== modes.move || props.moving !== -1) &&
+                        props.mode !== modes.cluster &&
+                        props.mode !== modes.remove
+                        ? "crosshair"
+                        : "auto",
             }}
             onClick={(event) => {
-                handleCanvasClick(event, id, props)
+                handleCanvasClick(event, id, props);
             }}
         >
             {props.children}
@@ -31,6 +36,3 @@ const Canvas = (props: canvasProps) => {
 };
 
 export default Canvas;
-
-
-

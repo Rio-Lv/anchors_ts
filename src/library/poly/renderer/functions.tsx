@@ -1,4 +1,5 @@
 import { Anchor } from "../interface";
+import React, { useState } from "react";
 const calculateShade = (anchors: Anchor[]) => {
   // anchors format ... [{i:0,x:0,y:10,z:0},{i:1,x:10,y:10,z:10}]
   var sz = 0; //sum z
@@ -7,11 +8,11 @@ const calculateShade = (anchors: Anchor[]) => {
   }
   const az = sz / anchors.length; // average z
 
-  return Math.random();
+  return sz / 20;
 };
 
-const createPoly = (anchors: Anchor[], color: string) => {
-  const Color = color || "black";
+const CreatePoly = (anchors: Anchor[], color: string) => {
+
   var anchorText: string = "";
 
   for (let i = 0; i < anchors.length; i++) {
@@ -26,12 +27,18 @@ const createPoly = (anchors: Anchor[], color: string) => {
 
   return (
     <div
+      onMouseEnter={() => {
+        // setC("blue")
+      }}
+      onMouseLeave={() => {
+        // setC("red")
+      }}
       style={{
         position: "absolute",
-        opacity: "50%",
+        opacity: "100%",
         width: "100%",
         height: "100%",
-        backgroundColor: Color,
+        backgroundColor: color,
         filter: `brightness(${calculateShade(anchors)})`,
         clipPath: text,
         transition: ".3s ease",
@@ -53,7 +60,7 @@ export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
       for (let j = 0; j < clusters[i].length; j++) {
         anchorCluster.push(anchors[clusters[i][j]]);
       }
-      polys.push(createPoly(anchorCluster, "grey"));
+      polys.push(CreatePoly(anchorCluster, "grey"));
     }
     return polys;
   }

@@ -151,12 +151,15 @@ export const updateClusters = (
   setClustering: Function,
   setClusters: Function
 ): void => {
-  console.log("updating cluster")
   setClustering((clustering: number[]) => {
     if (clustering.length > 2) {
       setClusters((clusters: number[][]): number[][] => {
+        const clone = [...clusters];
+        if (clone.includes(clustering) === false) {
+          clone.push(clustering)
+        }
+        return clone;
 
-        return [...clusters, ...[clustering]];
       });
     }
     return [];
@@ -169,6 +172,7 @@ const addClusteringNode = (index: number, setClustering: Function): void => {
     return clone;
   });
 };
+
 /**
  * @param {Anchor[]} anchors
  * @param {string} color
@@ -193,65 +197,68 @@ export const circleAnchors = (
   const size: number = 20;
 
   const circles = [];
-  for (let i = 0; i < anchors.length; i++) {
-    const whichColor = () => {
-      if (moving === i) {
-        return "#59c2ff";
-      } else if (mode === modes.remove) {
-        return "#e64e4e";
-      } else if (mode === modes.add) {
-        return "#15eb39";
-      } else if (mode === modes.cluster) {
-        const clusterColor = "#f7bf0a"
-        if (clustering.length === 0) {
-          return clusterColor;
-        } else {
-          if (clustering.includes(i)) {
-            return clusterColor
+  if (mode !== modes.hide) {
+    for (let i = 0; i < anchors.length; i++) {
+      const whichColor = () => {
+        if (moving === i) {
+          return "#59c2ff";
+        } else if (mode === modes.remove) {
+          return "#e64e4e";
+        } else if (mode === modes.add) {
+          return "#15eb39";
+        } else if (mode === modes.cluster) {
+          const clusterColor = "#f7bf0a"
+          if (clustering.length === 0) {
+            return clusterColor;
           } else {
-            return "#ffffff"
+            if (clustering.includes(i)) {
+              return clusterColor
+            } else {
+              return "#ffffff"
+            }
           }
+        } else {
+          return "#ffffff";
         }
-      } else {
-        return "#ffffff";
-      }
-    };
+      };
 
-    circles.push(
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          if (mode === modes.move) {
-            setMoving(anchors[i].i);
-          } else if (mode === modes.remove) {
-            deleteNode(i, setAnchors, setIndex, setClusters);
-          } else if (mode === modes.cluster) {
-            addClusteringNode(i, setClustering)
-          }
-        }}
-        key={uid + i}
-        style={{
-          fontWeight: 600,
-          fontSize: "13px",
-          position: "absolute",
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: "50%",
-          textAlign: "center",
-          transition: ".3s ease",
-          boxSizing: "border-box",
-          cursor: "pointer",
-          userSelect: "none",
-          left: `${anchors[i].x}%`,
-          top: `${anchors[i].y}%`,
-          pointerEvents: mode === modes.add || moving !== -1 ? "none" : "auto",
-          backgroundColor: whichColor(),
-          transform: "translate(-50%,-50%)",
-        }}
-      >
-        {anchors[i].i}
-      </div>
-    );
+      circles.push(
+        <div
+          key={uid + i}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (mode === modes.move) {
+              setMoving(anchors[i].i);
+            } else if (mode === modes.remove) {
+              deleteNode(i, setAnchors, setIndex, setClusters);
+            } else if (mode === modes.cluster) {
+              addClusteringNode(i, setClustering)
+            }
+          }}
+
+          style={{
+            fontWeight: 600,
+            fontSize: "13px",
+            position: "absolute",
+            width: `${size}px`,
+            height: `${size}px`,
+            borderRadius: "50%",
+            textAlign: "center",
+            transition: ".3s ease",
+            boxSizing: "border-box",
+            cursor: "pointer",
+            userSelect: "none",
+            left: `${anchors[i].x}%`,
+            top: `${anchors[i].y}%`,
+            pointerEvents: mode === modes.add || moving !== -1 ? "none" : "auto",
+            backgroundColor: whichColor(),
+            transform: "translate(-50%,-50%)",
+          }}
+        >
+          {anchors[i].i}
+        </div>
+      );
+    }
   }
   return circles;
 };
@@ -280,10 +287,19 @@ export const handleCanvasClick = (
     props.setAnchors((anchors: Anchor[]) => {
       const clone: Anchor[] = anchors;
       const coords = getMouseCoords(event, id);
-      clone[index] = { i: index, x: coords.x, y: coords.y, z: 0 };
+      clone[index] = { i: index, x: coords.x, y: coords.y, z: clone[index].z };
 
       props.setMoving(-1);
       return clone;
     });
   }
 };
+
+
+export const moveZ = (amount: number, moving: number, setAnchors: Function): void => {
+  setAnchors((anchors: Anchor[]) => {
+    const clone = [...anchors];
+    clone[moving].z = anchors[moving].z + amount;
+    return clone
+  })
+}
