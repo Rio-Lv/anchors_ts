@@ -18,13 +18,15 @@ const Builder = () => {
     const [moving, setMoving] = useState(-1);
 
     const [clustering, setClustering] = useState<number[]>([]);
-    const [clusters, setClusters] = useState<number[][]>([[0, 1, 2], [1, 2, 3]]);
+    const [clusters, setClusters] = useState<number[][]>([
+        [0, 1, 2],
+        [1, 2, 3],
+    ]);
 
     // mode listener
     useEffect(() => {
         const handleKeyDown = (event: any): void => {
-            setMoving(-1)
-
+            setMoving(-1);
             if (event.key === modes.add) {
                 setMode(modes.add);
             } else if (event.key === modes.remove) {
@@ -32,7 +34,6 @@ const Builder = () => {
             } else if (event.key === modes.cluster) {
                 setMode(modes.cluster);
             }
-
         };
         const handleKeyUp = (event: any): void => {
             setMode(modes.move);
@@ -49,27 +50,31 @@ const Builder = () => {
     useEffect(() => {
         setIndex(anchors.length);
     }, [anchors]);
-    const [lastMode, setLastMode] = useState(mode)
     useEffect(() => {
         if (mode === modes.move) {
             updateAnchors(setLooseAnchors, setAnchors);
             updateClusters(setClustering, setClusters);
         }
-
     }, [mode]);
 
+    const whichColor = () => {
+        if (mode === modes.remove) {
+            return "#e64e4e";
+        } else if (mode === modes.add) {
+            return "#15eb39";
+        } else if (mode === modes.cluster) {
+            return "#f7bf0a"
+        } else {
+            return "#a1a1a1";
+        }
+    };
 
     return (
         <div id={id} style={{ display: "flex", flexDirection: "column" }}>
-            <div>
-                Builder : {JSON.stringify(anchors)}
-            </div>
-            <div>
-                Cluster : {JSON.stringify(clusters)}
-            </div>
-            <div>
-                Clustering : {JSON.stringify(clustering)}
-            </div>
+            <div>Builder : {JSON.stringify(anchors)}</div>
+            <div>Cluster : {JSON.stringify(clusters)}</div>
+            <div>Clustering : {JSON.stringify(clustering)}</div>
+            <div>Moving : {moving}</div>
             <div
                 style={{
                     position: "relative",
@@ -77,7 +82,7 @@ const Builder = () => {
                     marginLeft: "40px",
                     width: "1000px",
                     height: "700px",
-                    border: mode !== modes.move ? "2px solid red" : "2px solid black",
+                    border: `${whichColor()} 2px solid`,
                 }}
             >
                 <Renderer anchors={anchors} clusters={clusters} />
