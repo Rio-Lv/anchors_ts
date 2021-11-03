@@ -18,10 +18,7 @@ const Builder = () => {
     const [moving, setMoving] = useState(-1);
 
     const [clustering, setClustering] = useState<number[]>([]);
-    const [clusters, setClusters] = useState<number[][]>([
-        [0, 1, 2],
-        [1, 2, 3],
-    ]);
+    const [clusters, setClusters] = useState<number[][]>([[0, 1, 2], [1, 2, 3]]);
 
     // mode listener
     useEffect(() => {
@@ -52,17 +49,15 @@ const Builder = () => {
     useEffect(() => {
         setIndex(anchors.length);
     }, [anchors]);
+    const [lastMode, setLastMode] = useState(mode)
     useEffect(() => {
         if (mode === modes.move) {
             updateAnchors(setLooseAnchors, setAnchors);
             updateClusters(setClustering, setClusters);
         }
-        console.log(mode);
+
     }, [mode]);
 
-    useEffect(() => {
-        console.log(clustering)
-    }, [clustering])
 
     return (
         <div id={id} style={{ display: "flex", flexDirection: "column" }}>

@@ -36,7 +36,7 @@ export interface rendererProps {
  */
 export const modes = {
   add: "Control",
-  remove: "Delete",
+  remove: "d",
   move: "Space character",
   cluster: "Shift",
 };

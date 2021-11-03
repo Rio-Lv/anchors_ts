@@ -50,6 +50,7 @@ export const updateAnchors = (
       looseAnchors.forEach((looseAnchor: Anchor) => {
         anchorsClone[looseAnchor.i] = looseAnchor;
       });
+
       return anchorsClone;
     });
     return [];
@@ -90,11 +91,35 @@ const deleteNode = (
   setIndex: Function,
   setClusters: Function
 ) => {
-
+  console.log("deleting node")
+  setClusters((clusters: number[][]) => {
+    const clone: number[][] = [...clusters]
+    const noIndex: number[][] = [];
+    for (let i = 0; i < clone.length; i++) {
+      if (clone[i].includes(index) === false) {
+        noIndex.push(clusters[i])
+      }
+    }
+    console.log("noIndex", noIndex)
+    const collapsed: number[][] = [];
+    console.log(noIndex.length)
+    for (let i = 0; i < noIndex.length; i++) {
+      const dropped: number[] = [];
+      console.log("noIndex[i]", noIndex[i].length)
+      for (let j = 0; j < noIndex[i].length; j++) {
+        if (noIndex[i][j] > index) {
+          dropped.push(noIndex[i][j] - 1)
+        } else {
+          dropped.push(noIndex[i][j])
+        }
+      }
+      collapsed.push(dropped)
+    }
+    console.log("collapsed", collapsed)
+    return collapsed
+  })
   setAnchors((anchors: Anchor[]) => {
-    setIndex((Index: number) => {
-      return anchors.length - 1;
-    });
+    setIndex(anchors.length - 1);
 
     const corrected: Anchor[] = [];
     anchors.forEach((anchor: Anchor) => {
@@ -118,6 +143,7 @@ const deleteNode = (
         }
       }
     });
+
     return corrected;
   });
 };
@@ -125,12 +151,12 @@ export const updateClusters = (
   setClustering: Function,
   setClusters: Function
 ): void => {
+  console.log("updating cluster")
   setClustering((clustering: number[]) => {
     if (clustering.length > 2) {
-      setClusters((clusters: number[][]) => {
-        const clustersClone: number[][] = clusters;
-        clustersClone.push(clustering);
-        return clustersClone;
+      setClusters((clusters: number[][]): number[][] => {
+
+        return [...clusters, ...[clustering]];
       });
     }
     return [];
@@ -207,7 +233,6 @@ export const circleAnchors = (
         style={{
           fontWeight: 600,
           fontSize: "13px",
-
           position: "absolute",
           width: `${size}px`,
           height: `${size}px`,
