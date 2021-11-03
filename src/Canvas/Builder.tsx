@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
     circleAnchors,
     moveZ,
+    NodeEditor,
     updateAnchors,
     updateClusters,
 
@@ -29,19 +30,33 @@ const Builder = () => {
     useEffect(() => {
         const handleKeyDown = (event: any): void => {
 
+
             if (event.key === modes.add) {
+                setMoving(-1);
                 setMode(modes.add);
             } else if (event.key === modes.remove) {
+                setMoving(-1);
                 setMode(modes.remove);
             } else if (event.key === modes.cluster) {
+                setMoving(-1);
                 setMode(modes.cluster);
             } else if (event.key === modes.hide) {
+                setMoving(-1);
                 setMode(modes.hide);
             }
         };
         const handleKeyUp = (event: any): void => {
 
-            setMode(modes.move);
+            if (event.key === modes.add) {
+                setMode(modes.move);
+            } else if (event.key === modes.remove) {
+                setMode(modes.move);
+            } else if (event.key === modes.cluster) {
+                setMode(modes.move);
+            } else if (event.key === modes.hide) {
+                setMode(modes.move);
+            }
+
         };
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
@@ -129,6 +144,9 @@ const Builder = () => {
                         setClustering
                     )}
                 </Canvas>
+
+                {mode === modes.move ? <div>{NodeEditor(moving, setAnchors, anchors)}</div> : null}
+
             </div>
         </div>
     );

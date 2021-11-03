@@ -91,33 +91,33 @@ const deleteNode = (
   setIndex: Function,
   setClusters: Function
 ) => {
-  console.log("deleting node")
+  console.log("deleting node");
   setClusters((clusters: number[][]) => {
-    const clone: number[][] = [...clusters]
+    const clone: number[][] = [...clusters];
     const noIndex: number[][] = [];
     for (let i = 0; i < clone.length; i++) {
       if (clone[i].includes(index) === false) {
-        noIndex.push(clusters[i])
+        noIndex.push(clusters[i]);
       }
     }
-    console.log("noIndex", noIndex)
+    console.log("noIndex", noIndex);
     const collapsed: number[][] = [];
-    console.log(noIndex.length)
+    console.log(noIndex.length);
     for (let i = 0; i < noIndex.length; i++) {
       const dropped: number[] = [];
-      console.log("noIndex[i]", noIndex[i].length)
+      console.log("noIndex[i]", noIndex[i].length);
       for (let j = 0; j < noIndex[i].length; j++) {
         if (noIndex[i][j] > index) {
-          dropped.push(noIndex[i][j] - 1)
+          dropped.push(noIndex[i][j] - 1);
         } else {
-          dropped.push(noIndex[i][j])
+          dropped.push(noIndex[i][j]);
         }
       }
-      collapsed.push(dropped)
+      collapsed.push(dropped);
     }
-    console.log("collapsed", collapsed)
-    return collapsed
-  })
+    console.log("collapsed", collapsed);
+    return collapsed;
+  });
   setAnchors((anchors: Anchor[]) => {
     setIndex(anchors.length - 1);
 
@@ -132,7 +132,6 @@ const deleteNode = (
             z: anchor.z,
           };
           corrected.push(down);
-
         } else {
           corrected.push({
             i: anchor.i,
@@ -156,10 +155,9 @@ export const updateClusters = (
       setClusters((clusters: number[][]): number[][] => {
         const clone = [...clusters];
         if (clone.includes(clustering) === false) {
-          clone.push(clustering)
+          clone.push(clustering);
         }
         return clone;
-
       });
     }
     return [];
@@ -207,14 +205,14 @@ export const circleAnchors = (
         } else if (mode === modes.add) {
           return "#15eb39";
         } else if (mode === modes.cluster) {
-          const clusterColor = "#f7bf0a"
+          const clusterColor = "#f7bf0a";
           if (clustering.length === 0) {
             return clusterColor;
           } else {
             if (clustering.includes(i)) {
-              return clusterColor
+              return clusterColor;
             } else {
-              return "#ffffff"
+              return "#ffffff";
             }
           }
         } else {
@@ -232,10 +230,9 @@ export const circleAnchors = (
             } else if (mode === modes.remove) {
               deleteNode(i, setAnchors, setIndex, setClusters);
             } else if (mode === modes.cluster) {
-              addClusteringNode(i, setClustering)
+              addClusteringNode(i, setClustering);
             }
           }}
-
           style={{
             fontWeight: 600,
             fontSize: "13px",
@@ -250,7 +247,8 @@ export const circleAnchors = (
             userSelect: "none",
             left: `${anchors[i].x}%`,
             top: `${anchors[i].y}%`,
-            pointerEvents: mode === modes.add || moving !== -1 ? "none" : "auto",
+            pointerEvents:
+              mode === modes.add || moving !== -1 ? "none" : "auto",
             backgroundColor: whichColor(),
             transform: "translate(-50%,-50%)",
           }}
@@ -295,11 +293,76 @@ export const handleCanvasClick = (
   }
 };
 
-
-export const moveZ = (amount: number, moving: number, setAnchors: Function): void => {
+export const moveZ = (
+  amount: number,
+  moving: number,
+  setAnchors: Function
+): void => {
   setAnchors((anchors: Anchor[]) => {
     const clone = [...anchors];
     clone[moving].z = anchors[moving].z + amount;
-    return clone
-  })
-}
+    return clone;
+  });
+};
+export const NodeEditor = (
+  moving: number,
+  setAnchors: Function,
+  anchors: Anchor[]
+) => {
+  const inputStyle = {
+    width: "40px",
+  };
+  const labelStyle = {
+    width: "20px",
+    marginLeft: "0px",
+    fontWeight: 600,
+    color: "white",
+    cursor: "default",
+  };
+
+  const createTab = (label: string, value: number) => {
+    return (
+      <div
+        style={{
+          border: "2px solid #c0c0c0",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "row",
+          marginRight: "10px",
+          textAlign: "center",
+          borderRadius: "5px",
+          backgroundColor: "#303030",
+        }}
+      >
+        <div style={labelStyle}>{label}</div>
+        <input style={inputStyle} type="number" defaultValue={value} onChange={e => {
+          setAnchors((anchors: any) => {
+            const clone = [...anchors];
+            clone[moving][label] = e.target.value
+            return clone
+          })
+        }} />
+      </div>
+    );
+  };
+  return (
+    <div>
+      {moving !== -1 ? (
+        <div
+          style={{
+            height: "30px",
+            position: "absolute",
+            right: "-13px",
+            top: "-40px",
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          {createTab("x", anchors[moving].x)}
+          {createTab("y", anchors[moving].y)}
+          {createTab("z", anchors[moving].z)}
+        </div>
+      ) : null}
+    </div>
+  );
+};
