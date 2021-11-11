@@ -28,7 +28,7 @@ const calculateShade = (anchors: Anchor[]) => {
 
   console.log("dy", dy);
 
-  const shade = .5 + (dz / 25) * (dy / 20);
+  const shade = .5 + (dz / 40) * (dy / 40) + (dz / 80) * (-dx / 80);
   return shade;
 };
 
@@ -129,7 +129,7 @@ export const CreatePolyV3 = (props: any) => {
           transition: ".3s ease",
           backgroundImage: `url(${"https://images.unsplash.com/photo-1579492450119-80542d516179?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY3JldGUlMjB0ZXh0dXJlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"})`,
         }}
-      ></div>
+      >{props.children}</div>
     </div>
   );
 };
