@@ -219,7 +219,6 @@ export const circleAnchors = (
           return "#ffffff";
         }
       };
-
       circles.push(
         <div
           key={uid + i}

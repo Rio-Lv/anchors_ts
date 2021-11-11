@@ -22,14 +22,13 @@ const Builder = () => {
 
     const [clustering, setClustering] = useState<number[]>([]);
     const [clusters, setClusters] = useState<number[][]>([
-        [0, 1, 2],
-        [1, 2, 3],
+        [0, 1, 2, 3],
+
     ]);
 
     // mode listener
     useEffect(() => {
         const handleKeyDown = (event: any): void => {
-
 
             if (event.key === modes.add) {
                 setMoving(-1);
@@ -55,15 +54,23 @@ const Builder = () => {
                 setMode(modes.move);
             } else if (event.key === modes.hide) {
                 setMode(modes.move);
+
             }
 
         };
+        const handleRightClick = (event: any) => {
+            event.preventDefault();
+            setMoving(-1);
+            setMode(modes.move);
+        }
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
+        window.addEventListener("contextmenu", handleRightClick)
         // remove listeners on dismount
         return () => {
             window.addEventListener("keydown", handleKeyDown);
             window.addEventListener("keyUp", handleKeyUp);
+            window.addEventListener("contextmenu", handleRightClick);
         };
     }, [moving]);
 
@@ -103,6 +110,7 @@ const Builder = () => {
                     width: "1000px",
                     height: "700px",
                     border: `${whichColor()} 2px solid`,
+                    backgroundColor: "black",
                 }}
             >
                 <Renderer anchors={anchors} clusters={clusters} />

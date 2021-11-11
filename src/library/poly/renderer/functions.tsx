@@ -1,29 +1,100 @@
 import { Anchor } from "../interface";
 import React, { useState } from "react";
+import { start } from "repl";
 const calculateShade = (anchors: Anchor[]) => {
   // anchors format ... [{i:0,x:0,y:10,z:0},{i:1,x:10,y:10,z:10}]
-  var sz = 0; //sum z
-  for (let i = 0; i < anchors.length; i++) {
-    sz += anchors[i].z;
-  }
-  const az = sz / anchors.length; // average z
+  var maxIZ: number = 0; //index
+  var minIZ: number = 0;
 
-  return sz / 20;
+  for (let i = 0; i < anchors.length; i++) {
+    if (anchors[i].z > anchors[maxIZ].z) {
+      maxIZ = i;
+    }
+    if (anchors[i].z < anchors[minIZ].z) {
+      minIZ = i;
+    }
+  }
+  console.log("max " + maxIZ, "min " + minIZ);
+  const dz = +anchors[maxIZ].z - +anchors[minIZ].z; //max height - min height
+  const X = anchors[maxIZ].x; // x of maxZ
+  const Y = anchors[maxIZ].y; // y of maxZ
+  const x = anchors[minIZ].x; // x of maxZ
+  const y = anchors[minIZ].y; // y of maxZ
+
+  const dx = X - x;
+  const dy = Y - y;
+
+  const d = Math.sqrt(dx * dx + dy * dy);
+
+  console.log("dy", dy);
+
+  const shade = .5 + (dz / 25) * (dy / 20);
+  return shade;
 };
 
-const CreatePoly = (anchors: Anchor[], color: string) => {
-
+/**
+ *
+ * @param {any} props -takes anchors, color and children for use as component
+ * @returns
+ */
+export const CreatePolyV3 = (props: any) => {
+  const clone: any = props.anchors;
   var anchorText: string = "";
 
-  for (let i = 0; i < anchors.length; i++) {
-    if (i === anchors.length - 1) {
+  const minI = (k: string) => {
+    var I = 0;
+    var lowest = clone[0][k];
+
+    for (let i = 1; i < clone.length; i++) {
+      if (clone[i][k] < lowest) {
+        lowest = clone[i][k];
+        I = i;
+      }
+    }
+    return I;
+  };
+  const maxI = (k: string) => {
+    var I = 0;
+    var highest = clone[0][k];
+    for (let i = 1; i < clone.length; i++) {
+      if (clone[i][k] > highest) {
+        highest = clone[i][k];
+        I = i;
+      }
+    }
+    return I;
+  };
+  const startX: number = clone[minI("x")].x;
+  const startY: number = clone[minI("y")].y;
+  const endX: number = clone[maxI("x")].x;
+  const endY: number = clone[maxI("y")].y;
+  const width = endX - startX;
+  const height = endY - startY;
+  console.log("width", width);
+  console.log("height", height);
+
+  var sumX = 0;
+  var sumY = 0;
+  props.anchors.forEach((anchor: Anchor) => {
+    sumX += anchor.x;
+    sumY += anchor.y;
+  });
+  const center = {
+    x: sumX / props.anchors.length,
+    y: sumY / props.anchors.length,
+  };
+
+  for (let i = 0; i < clone.length; i++) {
+    if (i === clone.length - 1) {
       // last polygon point no comma after
-      anchorText = anchorText.concat(`${anchors[i].x}% ${anchors[i].y}%`);
+      anchorText = anchorText.concat(`${clone[i].x}% ${clone[i].y}%`);
     } else {
-      anchorText = anchorText.concat(`${anchors[i].x}% ${anchors[i].y}% , `);
+      anchorText = anchorText.concat(`${clone[i].x}% ${clone[i].y}% , `);
     }
   }
   const text = `polygon(${anchorText})`;
+
+  const shade = calculateShade(clone);
 
   return (
     <div
@@ -38,19 +109,30 @@ const CreatePoly = (anchors: Anchor[], color: string) => {
         opacity: "100%",
         width: "100%",
         height: "100%",
-        backgroundColor: color,
-        filter: `brightness(${calculateShade(anchors)})`,
-        clipPath: text,
+
+        backgroundRepeat: "no-repeat",
+        overflow: "hidden",
         transition: ".3s ease",
+        clipPath: text,
+        textAlign: "center",
+
       }}
-    ></div>
+    >
+      <div
+        style={{
+          left: `${startX}%`,
+          top: `${startY}%`,
+          position: "absolute",
+          width: `${width}%`,
+          height: `${height}%`,
+          filter: `brightness(${shade})`,
+          transition: ".3s ease",
+          backgroundImage: `url(${"https://images.unsplash.com/photo-1579492450119-80542d516179?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY3JldGUlMjB0ZXh0dXJlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"})`,
+        }}
+      ></div>
+    </div>
   );
 };
-/**
- * @param anchors 
- * @param clusters 
- * @returns 
- */
 
 export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
   if (anchors.length > 2 && clusters.length > 0) {
@@ -60,7 +142,9 @@ export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
       for (let j = 0; j < clusters[i].length; j++) {
         anchorCluster.push(anchors[clusters[i][j]]);
       }
-      polys.push(CreatePoly(anchorCluster, "grey"));
+      // polys.push(<CreatePoly anchors={anchorCluster}></CreatePoly>);
+      polys.push(<CreatePolyV3 anchors={anchorCluster} />);
+      // CreatePolyV2(anchorCluster)
     }
     return polys;
   }
