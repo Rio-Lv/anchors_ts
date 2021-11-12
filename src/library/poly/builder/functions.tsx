@@ -252,7 +252,7 @@ export const circleAnchors = (
             transform: "translate(-50%,-50%)",
           }}
         >
-          {anchors[i].i}
+          {anchors[i].z}
         </div>
       );
     }
@@ -334,13 +334,18 @@ export const NodeEditor = (
         }}
       >
         <div style={labelStyle}>{label}</div>
-        <input style={inputStyle} type="number" defaultValue={value} onChange={e => {
-          setAnchors((anchors: any) => {
-            const clone = [...anchors];
-            clone[moving][label] = e.target.value
-            return clone
-          })
-        }} />
+        <input
+          style={inputStyle}
+          type="number"
+          defaultValue={value}
+          onChange={(e) => {
+            setAnchors((anchors: any) => {
+              const clone = [...anchors];
+              clone[moving][label] = e.target.value;
+              return clone;
+            });
+          }}
+        />
       </div>
     );
   };
@@ -351,8 +356,8 @@ export const NodeEditor = (
           style={{
             height: "30px",
             position: "absolute",
-            right: "-13px",
-            top: "-40px",
+            right: "20px",
+            top: "20px",
             display: "flex",
             flexDirection: "row",
           }}

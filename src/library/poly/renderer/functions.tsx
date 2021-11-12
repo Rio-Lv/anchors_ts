@@ -1,35 +1,51 @@
 import { Anchor } from "../interface";
 import React, { useState } from "react";
 import { start } from "repl";
-const calculateShade = (anchors: Anchor[]) => {
-  // anchors format ... [{i:0,x:0,y:10,z:0},{i:1,x:10,y:10,z:10}]
-  var maxIZ: number = 0; //index
-  var minIZ: number = 0;
+const lightVector = [0, 1, 1];
+const startLight = 1.2;
+const dotRatio = 0.4;
+export const calculateStuff = (anchors: Anchor[]) => {
+  const A = {
+    x: anchors[1].x - anchors[0].x,
+    y: anchors[1].y - anchors[0].y,
+    z: anchors[1].z - anchors[0].z,
+  };
+  const B = {
+    x: anchors[2].x - anchors[0].x,
+    y: anchors[2].y - anchors[0].y,
+    z: anchors[2].z - anchors[0].z,
+  };
+  const C = [
+    A.y * B.z - A.z * B.y,
+    A.z * B.x - A.x * B.z,
+    A.x * B.y - A.y * B.x,
+  ];
 
-  for (let i = 0; i < anchors.length; i++) {
-    if (anchors[i].z > anchors[maxIZ].z) {
-      maxIZ = i;
-    }
-    if (anchors[i].z < anchors[minIZ].z) {
-      minIZ = i;
+  var maxDim = 0;
+  for (let i = 0; i < C.length; i++) {
+    if (Math.abs(C[i]) > maxDim) {
+      maxDim = C[i];
     }
   }
-  console.log("max " + maxIZ, "min " + minIZ);
-  const dz = +anchors[maxIZ].z - +anchors[minIZ].z; //max height - min height
-  const X = anchors[maxIZ].x; // x of maxZ
-  const Y = anchors[maxIZ].y; // y of maxZ
-  const x = anchors[minIZ].x; // x of maxZ
-  const y = anchors[minIZ].y; // y of maxZ
+  const regC: number[] = [];
+  for (let i = 0; i < C.length; i++) {
+    regC.push(+(C[i] / maxDim).toPrecision(4));
+  }
+  // linear light
 
-  const dx = X - x;
-  const dy = Y - y;
+  var dot = 0;
+  for (let i = 0; i < lightVector.length; i++) {
+    dot += regC[i] * lightVector[i];
+  }
 
-  const d = Math.sqrt(dx * dx + dy * dy);
-
-  console.log("dy", dy);
-
-  const shade = .5 + (dz / 40) * (dy / 40) + (dz / 80) * (-dx / 80);
-  return shade;
+  return {
+    shade: startLight - dot * dotRatio,
+    A: A,
+    B: B,
+    C: C,
+    regC: regC,
+    dot: dot,
+  };
 };
 
 /**
@@ -70,19 +86,8 @@ export const CreatePolyV3 = (props: any) => {
   const endY: number = clone[maxI("y")].y;
   const width = endX - startX;
   const height = endY - startY;
-  console.log("width", width);
-  console.log("height", height);
-
-  var sumX = 0;
-  var sumY = 0;
-  props.anchors.forEach((anchor: Anchor) => {
-    sumX += anchor.x;
-    sumY += anchor.y;
-  });
-  const center = {
-    x: sumX / props.anchors.length,
-    y: sumY / props.anchors.length,
-  };
+  // console.log("width", width);
+  // console.log("height", height);
 
   for (let i = 0; i < clone.length; i++) {
     if (i === clone.length - 1) {
@@ -94,7 +99,11 @@ export const CreatePolyV3 = (props: any) => {
   }
   const text = `polygon(${anchorText})`;
 
-  const shade = calculateShade(clone);
+  const stuff = calculateStuff(clone);
+  const shade = stuff.shade;
+
+  const textUrl =
+    "https://images.photowall.com/products/60455/concrete-texture-3.jpg?h=699&q=85";
 
   return (
     <div
@@ -109,27 +118,34 @@ export const CreatePolyV3 = (props: any) => {
         opacity: "100%",
         width: "100%",
         height: "100%",
-
         backgroundRepeat: "no-repeat",
         overflow: "hidden",
         transition: ".3s ease",
         clipPath: text,
         textAlign: "center",
-
       }}
     >
       <div
         style={{
+          filter: props.filter
+            ? `brightness(${shade}) ${props.filter}`
+            : `brightness(${shade})`,
           left: `${startX}%`,
           top: `${startY}%`,
           position: "absolute",
           width: `${width}%`,
           height: `${height}%`,
-          filter: `brightness(${shade})`,
           transition: ".3s ease",
-          backgroundImage: `url(${"https://images.unsplash.com/photo-1579492450119-80542d516179?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY3JldGUlMjB0ZXh0dXJlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"})`,
+          backgroundPosition: "center",
+          // backgroundRepeat: "no-repeat",
+          // transform: "scale(1.1) skewX(5deg) skewY(5deg) skewZ(5deg)",
+          // backgroundSize: "100% 100%",
+          // backgroundSize: width > height ? `${width * 10}px ${width * 10}px` : `${height * 7}px ${height * 7}px`,
+          backgroundImage: `url(${textUrl})`,
         }}
-      >{props.children}</div>
+      >
+        {props.children}
+      </div>
     </div>
   );
 };
