@@ -1,10 +1,13 @@
 import { Anchor } from "../interface";
 import React, { useState } from "react";
-import { start } from "repl";
-const lightVector = [0, 1, 1];
-const startLight = 1.2;
-const dotRatio = 0.4;
+//darken [light from right,light from top, light from front]
+
+const startLight = 0.92;
+const dotRatio = 0.3;
 export const calculateStuff = (anchors: Anchor[]) => {
+  // lighting
+  console.log("calculateStuff");
+  const lightVector = [0.4, 0.8, 0.0];
   const A = {
     x: anchors[1].x - anchors[0].x,
     y: anchors[1].y - anchors[0].y,
@@ -20,7 +23,6 @@ export const calculateStuff = (anchors: Anchor[]) => {
     A.z * B.x - A.x * B.z,
     A.x * B.y - A.y * B.x,
   ];
-
   var maxDim = 0;
   for (let i = 0; i < C.length; i++) {
     if (Math.abs(C[i]) > maxDim) {
@@ -32,14 +34,13 @@ export const calculateStuff = (anchors: Anchor[]) => {
     regC.push(+(C[i] / maxDim).toPrecision(4));
   }
   // linear light
-
-  var dot = 0;
+  var dot = startLight;
   for (let i = 0; i < lightVector.length; i++) {
-    dot += regC[i] * lightVector[i];
+    dot -= regC[i] * lightVector[i] * dotRatio;
   }
 
   return {
-    shade: startLight - dot * dotRatio,
+    shade: dot,
     A: A,
     B: B,
     C: C,
@@ -55,6 +56,8 @@ export const calculateStuff = (anchors: Anchor[]) => {
  */
 export const CreatePolyV3 = (props: any) => {
   const clone: any = props.anchors;
+  const mouse = props.mouse;
+  console.log("mouse", mouse);
   var anchorText: string = "";
 
   const minI = (k: string) => {
@@ -119,8 +122,8 @@ export const CreatePolyV3 = (props: any) => {
         width: "100%",
         height: "100%",
         backgroundRepeat: "no-repeat",
-        overflow: "hidden",
-        transition: ".3s ease",
+        // overflow: "hidden",
+        transition: ".1s ",
         clipPath: text,
         textAlign: "center",
       }}
@@ -135,12 +138,16 @@ export const CreatePolyV3 = (props: any) => {
           position: "absolute",
           width: `${width}%`,
           height: `${height}%`,
-          transition: ".3s ease",
+          transition: ".1s ease",
+
           backgroundPosition: "center",
           // backgroundRepeat: "no-repeat",
           // transform: "scale(1.1) skewX(5deg) skewY(5deg) skewZ(5deg)",
-          // backgroundSize: "100% 100%",
-          // backgroundSize: width > height ? `${width * 10}px ${width * 10}px` : `${height * 7}px ${height * 7}px`,
+          // backgroundSize: "100% 100% ",
+          // backgroundSize:
+          //   width > height
+          //     ? `${width * 10}px ${width * 10}px`
+          //     : `${height * 7}px ${height * 7}px`,
           backgroundImage: `url(${textUrl})`,
         }}
       >

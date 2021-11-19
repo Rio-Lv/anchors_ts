@@ -13,20 +13,42 @@ import {
   init,
   v1clusters,
   v1,
-  v3,
-  v3clusters,
+  v2,
+  v2Clusters,
+  base,
+  baseCluster,
+  blue,
+  blueClusters,
+  colorMobile,
+  colorMobileClusters,
+  colorWeb,
+  colorWebClusters,
+  colorWebE,
+  colorWebClustersE,
+  mobileRed,
+  mobileRedClusters,
+  cracked,
+  crackedClusters,
+  crackedJoint,
+  crackedJointClusters,
+  crackedJointSealed,
 } from "../library/poly/renderer/anchorsInit";
+
+const Anchors = crackedJointSealed;
+const Anchors2 = crackedJoint;
+const Clusters = crackedJointClusters;
 
 const Builder = () => {
   const id = "Anchors_Builder";
-  const [anchors, setAnchors] = useState<Anchor[]>(v3);
+  const [anchors, setAnchors] = useState<Anchor[]>(Anchors);
+  const [clusters, setClusters] = useState<number[][]>(Clusters);
+
   const [looseAnchors, setLooseAnchors] = useState<Anchor[]>([]);
   const [mode, setMode] = useState<string>(modes.move);
   const [index, setIndex] = useState<number>(anchors.length);
   const [moving, setMoving] = useState(-1);
 
   const [clustering, setClustering] = useState<number[]>([]);
-  const [clusters, setClusters] = useState<number[][]>(v3clusters);
 
   // mode listener
   useEffect(() => {
@@ -43,10 +65,10 @@ const Builder = () => {
       } else if (event.key === modes.hide) {
         setMoving(-1);
         setMode(modes.hide);
-      }
-      if (event.key === "p") {
-        console.log("anchors", JSON.stringify(anchors));
-        console.log("clusters", JSON.stringify(clusters));
+      } else if (event.key === "1") {
+        setAnchors(Anchors);
+      } else if (event.key === "2") {
+        setAnchors(Anchors2);
       }
     };
     const handleKeyUp = (event: any): void => {
@@ -58,6 +80,11 @@ const Builder = () => {
         setMode(modes.move);
       } else if (event.key === modes.hide) {
         setMode(modes.move);
+      } else {
+        if (event.key === "p") {
+          console.log("anchors", JSON.stringify(anchors));
+          console.log("clusters", JSON.stringify(clusters));
+        }
       }
     };
     const handleRightClick = (event: any) => {
@@ -106,10 +133,10 @@ const Builder = () => {
       <div
         style={{
           position: "absolute",
-          marginTop: "20px",
-          marginLeft: "20px",
-          width: "90%",
-          height: "90%",
+          marginTop: "60px",
+          marginLeft: "60px",
+          width: "80%",
+          height: "80%",
           // border: `${whichColor()} 2px solid`,
           backgroundColor: "black",
         }}

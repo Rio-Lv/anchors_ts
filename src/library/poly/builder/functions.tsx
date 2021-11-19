@@ -252,7 +252,7 @@ export const circleAnchors = (
             transform: "translate(-50%,-50%)",
           }}
         >
-          {anchors[i].z}
+          {anchors[i].i}
         </div>
       );
     }
