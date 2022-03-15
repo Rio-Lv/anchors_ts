@@ -341,7 +341,7 @@ export const NodeEditor = (
           onChange={(e) => {
             setAnchors((anchors: any) => {
               const clone = [...anchors];
-              clone[moving][label] = e.target.value;
+              clone[moving][label] = +e.target.value;
               return clone;
             });
           }}
@@ -357,14 +357,14 @@ export const NodeEditor = (
             height: "30px",
             position: "absolute",
             right: "20px",
-            top: "20px",
+            top: "-40px",
             display: "flex",
             flexDirection: "row",
           }}
         >
-          {createTab("x", anchors[moving].x)}
-          {createTab("y", anchors[moving].y)}
-          {createTab("z", anchors[moving].z)}
+          {createTab("x", +anchors[moving].x)}
+          {createTab("y", +anchors[moving].y)}
+          {createTab("z", +anchors[moving].z)}
         </div>
       ) : null}
     </div>

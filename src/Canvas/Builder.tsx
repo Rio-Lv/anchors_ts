@@ -32,10 +32,23 @@ import {
   crackedJoint,
   crackedJointClusters,
   crackedJointSealed,
+  crackedFloored,
+  crackedOverFlow,
+  cracked2,
+  cracked2Mobile,
+  cracked2Mobile2,
+  cracked2Mobile3,
+  cracked2Mobile4,
+  cracked3,
+  cracked3Mobile,
+  Tall,
+  TallClusters,
 } from "../library/poly/renderer/anchorsInit";
 
 const Anchors = crackedJointSealed;
 const Anchors2 = crackedJoint;
+const Anchors3 = crackedFloored;
+const Anchors4 = crackedOverFlow;
 const Clusters = crackedJointClusters;
 
 const Builder = () => {
@@ -66,9 +79,20 @@ const Builder = () => {
         setMoving(-1);
         setMode(modes.hide);
       } else if (event.key === "1") {
-        setAnchors(Anchors);
+        setAnchors(cracked3);
       } else if (event.key === "2") {
-        setAnchors(Anchors2);
+        setAnchors(cracked2Mobile);
+      } else if (event.key === "3") {
+        setAnchors(cracked2Mobile2);
+      } else if (event.key === "4") {
+        setAnchors(cracked2Mobile3);
+      } else if (event.key === "5") {
+        setAnchors(cracked2Mobile4);
+      } else if (event.key === "6") {
+        setAnchors(cracked3Mobile);
+      } else if (event.key === "7") {
+        setClusters(TallClusters);
+        setAnchors(Tall);
       }
     };
     const handleKeyUp = (event: any): void => {
@@ -124,20 +148,22 @@ const Builder = () => {
     }
   };
 
+  var mobile = window.innerWidth < window.innerHeight;
+  mobile = true;
+
   return (
     <div id={id} style={{ display: "flex", flexDirection: "column" }}>
-      {/* <div>Builder : {JSON.stringify(anchors)}</div>
-            <div>Cluster : {JSON.stringify(clusters)}</div>
-            <div>Clustering : {JSON.stringify(clustering)}</div>
-            <div>Moving : {moving}</div> */}
+      <div>Builder : {JSON.stringify(anchors)}</div>
+      <div>Cluster : {JSON.stringify(clusters)}</div>
+      <div>Clustering : {JSON.stringify(clustering)}</div>
+      <div>Moving : {moving}</div>
       <div
         style={{
           position: "absolute",
-          marginTop: "60px",
-          marginLeft: "60px",
-          width: "80%",
-          height: "80%",
-          // border: `${whichColor()} 2px solid`,
+          marginTop: "100px",
+          marginLeft: "100px",
+          width: "600px",
+          height: "600px",
           backgroundColor: "black",
         }}
       >

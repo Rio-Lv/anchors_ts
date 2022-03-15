@@ -2,7 +2,7 @@ import { Anchor } from "../interface";
 import React, { useState } from "react";
 //darken [light from right,light from top, light from front]
 
-const startLight = 0.92;
+const startLight = 1;
 const dotRatio = 0.3;
 export const calculateStuff = (anchors: Anchor[]) => {
   // lighting
@@ -122,8 +122,7 @@ export const CreatePolyV3 = (props: any) => {
         width: "100%",
         height: "100%",
         backgroundRepeat: "no-repeat",
-        // overflow: "hidden",
-        transition: ".1s ",
+        transition: `${props.speed}s`,
         clipPath: text,
         textAlign: "center",
       }}
@@ -138,16 +137,8 @@ export const CreatePolyV3 = (props: any) => {
           position: "absolute",
           width: `${width}%`,
           height: `${height}%`,
-          transition: ".1s ease",
-
+          transition: `${props.speed}s `,
           backgroundPosition: "center",
-          // backgroundRepeat: "no-repeat",
-          // transform: "scale(1.1) skewX(5deg) skewY(5deg) skewZ(5deg)",
-          // backgroundSize: "100% 100% ",
-          // backgroundSize:
-          //   width > height
-          //     ? `${width * 10}px ${width * 10}px`
-          //     : `${height * 7}px ${height * 7}px`,
           backgroundImage: `url(${textUrl})`,
         }}
       >
@@ -157,7 +148,11 @@ export const CreatePolyV3 = (props: any) => {
   );
 };
 
-export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
+export const generatePolygons = (
+  anchors: Anchor[],
+  clusters: number[][],
+  speed: number
+) => {
   if (anchors.length > 2 && clusters.length > 0) {
     const polys: any = [];
     for (let i = 0; i < clusters.length; i++) {
@@ -165,9 +160,7 @@ export const generatePolygons = (anchors: Anchor[], clusters: number[][]) => {
       for (let j = 0; j < clusters[i].length; j++) {
         anchorCluster.push(anchors[clusters[i][j]]);
       }
-      // polys.push(<CreatePoly anchors={anchorCluster}></CreatePoly>);
-      polys.push(<CreatePolyV3 anchors={anchorCluster} />);
-      // CreatePolyV2(anchorCluster)
+      polys.push(<CreatePolyV3 anchors={anchorCluster} speed={speed} />);
     }
     return polys;
   }

@@ -8,6 +8,7 @@ import { generatePolygons, CreatePolyV3 } from "./functions";
 
 function Renderer(props: rendererProps) {
   const [booking, setBooking] = useState(false);
+  const [speed, setSpeed] = useState(0.1);
 
   const createColorPoly = (cluster: number[], filter: string) => {
     const a = cluster[0];
@@ -24,7 +25,12 @@ function Renderer(props: rendererProps) {
       props.anchors[c],
     ]);
     return (
-      <CreatePolyV3 anchors={newAnchors} color={"cyan"} filter={filter}>
+      <CreatePolyV3
+        anchors={newAnchors}
+        color={"cyan"}
+        filter={filter}
+        speed={speed}
+      >
         <div
           onMouseEnter={() => {
             setBooking(true);
@@ -37,12 +43,12 @@ function Renderer(props: rendererProps) {
             position: "relative",
             width: `${100}%`,
             height: `${100}%`,
-            transition: ".3s ease",
             cursor: "pointer",
             textAlign: "center",
             fontWeight: 600,
             fontSize: "22px",
             top: "40%",
+            overflow: "hidden",
           }}
         >
           {/* {JSON.stringify(stuff.dot)}:{JSON.stringify(stuff.regC)} */}
@@ -59,13 +65,7 @@ function Renderer(props: rendererProps) {
     return filtered;
   };
   const black = [[0, 1, 2]];
-  const blue = [
-    [12, 13, 14],
-    // [16, 17, 21],
-    // [17, 18, 21],
-    // [16, 17, 20],
-    // [17, 18, 20],
-  ];
+  const blue = [[12, 13, 14]];
   const green = [[3, 4, 5]];
   const orange = [[6, 7, 8]];
   const red = [[9, 10, 11]];
@@ -79,44 +79,12 @@ function Renderer(props: rendererProps) {
         // backgroundColor: "#ffffff",
       }}
     >
-      {generatePolygons(props.anchors || [], props.clusters || [])}
-
-      {filterClusters(blue, "sepia(70%) hue-rotate(-50deg) saturate(1700%) ")}
+      {generatePolygons(props.anchors || [], props.clusters || [], speed)}
+      {/* {filterClusters(blue, "sepia(70%) hue-rotate(-50deg) saturate(1700%) ")}
       {filterClusters(green, "sepia(70%) hue-rotate(-50deg) saturate(1700%) ")}
       {filterClusters(orange, "sepia(70%) hue-rotate(-50deg) saturate(1700%) ")}
       {filterClusters(black, "brightness(50%) saturate(100%) contrast(3)")}
-      {filterClusters(red, "brightness(50%) saturate(100%) contrast(3)")}
-
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "45%",
-          fontSize: "50px",
-          transform:
-            "translate(-50%,-50%)  skewX(-1deg) skewY(2deg) skewX(-1deg) perspective(20px) rotateX(1deg)",
-          fontWeight: 600,
-          color: "#ffffffe8",
-          filter: `drop-shadow(2px 2px 7px #9b030fc0)`,
-        }}
-      >
-        BOOK
-      </div>
-      {/* <div
-        style={{
-          position: "absolute",
-          left: "69%",
-          top: "80%",
-          fontSize: "50px",
-          transform:
-            "translate(-50%,-50%)  skewX(-1deg) skewY(2deg) skewX(-5deg) perspective(70px) rotateX(-5deg) rotateZ(2deg)",
-          fontWeight: 600,
-          color: "white",
-          filter: `drop-shadow(2px 2px 7px #9b030fc0)`,
-        }}
-      >
-        FAQ
-      </div> */}
+      {filterClusters(red, "brightness(50%) saturate(100%) contrast(3)")} */}
     </div>
   );
 }
