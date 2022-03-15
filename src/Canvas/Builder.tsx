@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   circleAnchors,
-  moveZ,
+  // moveZ,
   NodeEditor,
   updateAnchors,
   updateClusters,
@@ -10,46 +10,14 @@ import { modes, Anchor } from "../library/poly/interface";
 import Renderer from "../library/poly/renderer/Renderer";
 import Canvas from "./Canvas";
 import {
-  init,
-  v1clusters,
-  v1,
-  v2,
-  v2Clusters,
-  base,
-  baseCluster,
-  blue,
-  blueClusters,
-  colorMobile,
-  colorMobileClusters,
-  colorWeb,
-  colorWebClusters,
-  colorWebE,
-  colorWebClustersE,
-  mobileRed,
-  mobileRedClusters,
-  cracked,
-  crackedClusters,
-  crackedJoint,
-  crackedJointClusters,
-  crackedJointSealed,
-  crackedFloored,
-  crackedOverFlow,
-  cracked2,
-  cracked2Mobile,
-  cracked2Mobile2,
-  cracked2Mobile3,
-  cracked2Mobile4,
-  cracked3,
-  cracked3Mobile,
-  Tall,
-  TallClusters,
+  gitExampleAnchors,
+  gitExampleCluster,
 } from "../library/poly/renderer/anchorsInit";
+import ReactJson from "react-json-view";
 
-const Anchors = crackedJointSealed;
-const Anchors2 = crackedJoint;
-const Anchors3 = crackedFloored;
-const Anchors4 = crackedOverFlow;
-const Clusters = crackedJointClusters;
+const Anchors = gitExampleAnchors;
+
+const Clusters = gitExampleCluster;
 
 const Builder = () => {
   const id = "Anchors_Builder";
@@ -79,20 +47,7 @@ const Builder = () => {
         setMoving(-1);
         setMode(modes.hide);
       } else if (event.key === "1") {
-        setAnchors(cracked3);
-      } else if (event.key === "2") {
-        setAnchors(cracked2Mobile);
-      } else if (event.key === "3") {
-        setAnchors(cracked2Mobile2);
-      } else if (event.key === "4") {
-        setAnchors(cracked2Mobile3);
-      } else if (event.key === "5") {
-        setAnchors(cracked2Mobile4);
-      } else if (event.key === "6") {
-        setAnchors(cracked3Mobile);
-      } else if (event.key === "7") {
-        setClusters(TallClusters);
-        setAnchors(Tall);
+        setAnchors(anchors);
       }
     };
     const handleKeyUp = (event: any): void => {
@@ -136,34 +91,40 @@ const Builder = () => {
     }
   }, [mode]);
 
-  const whichColor = () => {
-    if (mode === modes.remove) {
-      return "#e64e4e";
-    } else if (mode === modes.add) {
-      return "#15eb39";
-    } else if (mode === modes.cluster) {
-      return "#f7bf0a";
-    } else {
-      return "#a1a1a1";
-    }
-  };
+  // const whichColor = () => {
+  //   if (mode === modes.remove) {
+  //     return "#e64e4e";
+  //   } else if (mode === modes.add) {
+  //     return "#15eb39";
+  //   } else if (mode === modes.cluster) {
+  //     return "#f7bf0a";
+  //   } else {
+  //     return "#a1a1a1";
+  //   }
+  // };
 
-  var mobile = window.innerWidth < window.innerHeight;
-  mobile = true;
+  // var mobile = window.innerWidth < window.innerHeight;
+  // mobile = true;
 
   return (
     <div id={id} style={{ display: "flex", flexDirection: "column" }}>
-      <div>Builder : {JSON.stringify(anchors)}</div>
+      {/* <div>Builder : {JSON.stringify(anchors)}</div>
       <div>Cluster : {JSON.stringify(clusters)}</div>
-      <div>Clustering : {JSON.stringify(clustering)}</div>
-      <div>Moving : {moving}</div>
+      <div>Clustering : {JSON.stringify(clustering)}</div> */}
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <ReactJson src={{ anchors }} />
+        <ReactJson src={{ clusters }} />
+        <ReactJson src={{ clustering }} />
+      </div>
+      {/* <div>Moving : {moving}</div> */}
       <div
         style={{
           position: "absolute",
-          marginTop: "100px",
-          marginLeft: "100px",
-          width: "600px",
-          height: "600px",
+          top: "50%",
+          right: "100px",
+          transform: "translate(0%,-50%)",
+          width: "700px",
+          height: "800px",
           backgroundColor: "black",
         }}
       >
