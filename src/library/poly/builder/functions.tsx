@@ -192,7 +192,7 @@ export const circleAnchors = (
   setClustering: Function
 ) => {
   const uid = "circleAnchors_";
-  const size: number = 20;
+  const size: number = 22;
 
   const circles = [];
   if (mode !== modes.hide) {
@@ -239,7 +239,9 @@ export const circleAnchors = (
             width: `${size}px`,
             height: `${size}px`,
             borderRadius: "50%",
-            textAlign: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             transition: ".3s ease",
             boxSizing: "border-box",
             cursor: "pointer",

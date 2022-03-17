@@ -6,7 +6,6 @@ const startLight = 1;
 const dotRatio = 0.3;
 export const calculateStuff = (anchors: Anchor[]) => {
   // lighting
-  console.log("calculateStuff");
   const lightVector = [0.4, 0.8, 0.0];
   const A = {
     x: anchors[1].x - anchors[0].x,
@@ -56,8 +55,6 @@ export const calculateStuff = (anchors: Anchor[]) => {
  */
 export const CreatePolyV3 = (props: any) => {
   const clone: any = props.anchors;
-  const mouse = props.mouse;
-  console.log("mouse", mouse);
   var anchorText: string = "";
 
   const minI = (k: string) => {
@@ -89,8 +86,6 @@ export const CreatePolyV3 = (props: any) => {
   const endY: number = clone[maxI("y")].y;
   const width = endX - startX;
   const height = endY - startY;
-  // console.log("width", width);
-  // console.log("height", height);
 
   for (let i = 0; i < clone.length; i++) {
     if (i === clone.length - 1) {

@@ -40,4 +40,5 @@ export const modes = {
   move: "Space character",
   cluster: "Shift",
   hide: "h",
+  group: "g",
 };
