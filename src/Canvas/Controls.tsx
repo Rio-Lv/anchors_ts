@@ -8,13 +8,13 @@ const Controls = (props: Props) => {
       <Instructions>
         <h1>Controls</h1>
         <Command>Click an Anchor to edit it</Command>
-        <Command>Hold H to hide Anchors</Command>
-        <Command>CTRL + Click To create new anchor</Command>
+        <Command>Hold "H" to hide Anchors</Command>
+        <Command>"CTRL" + Click To create new anchor</Command>
         <Command>
-          SHIFT + Click on existing Anchors To create new clusters
+          "SHIFT" + Click on existing Anchors To create new clusters
         </Command>
-        <Command>D + Click to delete anchor</Command>
-        <Command>CTRL + S to save to current tab</Command>
+        <Command>"D" + Click to delete anchor</Command>
+        <Command>Press "S" to save to current tab</Command>
         <Command>
           Navigate Different saves by clicking the numbers or by pressing
           numbers 1-3 on the key board

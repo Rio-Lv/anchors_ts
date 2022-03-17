@@ -54,9 +54,8 @@ const Builder = () => {
     };
     window.addEventListener("keydown", tabNumbers);
     window.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && e.key === "s") {
-        e.preventDefault();
-
+      if (e.key === "s") {
+        setMode(modes.move);
         setSaving(true);
         setTimeout(() => {
           setSaving(false);
